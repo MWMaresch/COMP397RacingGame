@@ -18,7 +18,6 @@
 /// <reference path="../managers/collision.ts" />
 
 /// <reference path="../scenes/menu.ts" />
-/// <reference path="../scenes/shooter.ts" />
 /// <reference path="../scenes/track.ts" />
 /// <reference path="../scenes/multiplayertrack.ts" />
 /// <reference path="../scenes/instructions.ts" />

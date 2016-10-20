@@ -2,13 +2,18 @@ module objects {
     export class Player extends objects.GameObject {
 
         private _keyPressed : number;
-        private _acceleration : number = 0.6;
-        private _friction : number = 0.9;
 
-        private _turnAccel : number = 0.5;
-        private _turnFriction : number = 0.9;
+        //constant variables
+        //if only the const or readonly keywords could be used here
+        private _ACCELERATION : number = 0.67;
+        private _DEFAULT_FRICTION : number = 1.12;
+        private _TURN_ACCEL : number = 0.6;
+        private _TURN_FRICTION : number = 1.2;
+        private _GRASS_FRICTION : number = 1.4;
+
+        //other variables
+        private _curFriction : number = 0;
         private _curTurnSpeed : number = 0;
-
         private _velX : number = 0;
         private _velY : number = 0;
 
@@ -27,66 +32,89 @@ module objects {
         }
 
         public bump(theirX:number,theirY:number) : void{
-            this._velX = 30 / (this.position.x - theirX);
-            this._velY = 30 / (this.position.y - theirY);
+            this._velX = (this.position.x - theirX)/ 10;
+            this._velY = (this.position.y - theirY) / 10;
+        }
+
+        //this exists so that p2 can call gameObject.update()
+        protected updateSuper() : void {
+            super.update();
         }
 
         public update() : void {
 
             super.update();
             
-            if(controls.P1UP) {
-                this.moveForward();
-            }
-            
-            if(controls.P1DOWN) {
+            if(controls.P1UP) 
+                this.moveForward();      
+                      
+            if(controls.P1DOWN) 
                 this.brake();
-            }
 
-            if(controls.P1RIGHT) {
+            if(controls.P1RIGHT) 
                 this.turnLeft();
-            }
 
-            if(controls.P1LEFT) {
+            if(controls.P1LEFT) 
                 this.turnRight();
-            }
+
+            this.checkBoundaries();
             this.updateMovement();
         }
 
+        protected checkBoundaries(){
+            //if we try to go off any edge of the stage, act as if we hit a wall
+            if (this.position.x > config.Screen.WIDTH)            
+                this.bump (this.position.x + 50, this.position.y)
+
+            else if (this.position.x < 0)
+                this.bump (this.position.x - 50, this.position.y)
+
+            else if (this.position.y > config.Screen.HEIGHT)
+                this.bump (this.position.x, this.position.y + 50)
+
+            else if (this.position.y < 0)
+                this.bump (this.position.x, this.position.y - 50)
+            
+        }
+
         protected updateMovement(){
-            this._pixelData = getPixel(this.x, this.y).data;
+            //adjust friction depending on what surface we're on
+            this._pixelData = getPixel(this.position.x, this.position.y).data;
+            //if the green value beneath us is >= 150 and the red value is <= 0 then we're certainly on grass
             if (this._pixelData[1] >= 150 && this._pixelData[0] <= 0)
-                this._friction = 0.7;
+                this._curFriction = this._GRASS_FRICTION;
             else
-                this._friction = 0.91;
+                this._curFriction = this._DEFAULT_FRICTION;
 
-
-            this._velX *= this._friction;
-            this._velY *= this._friction;
-            this._curTurnSpeed *= this._turnFriction;
-
+            //smooth acceleration + momentum based movement and turning
+            this._curTurnSpeed /= this._TURN_FRICTION;
             this.rotation += this._curTurnSpeed;
+
+            this._velX /= this._curFriction;
+            this._velY /= this._curFriction;
             this.position.x += this._velX;
             this.position.y += this._velY;
         }
 
-
         public moveForward() {
-            this._velX += this._acceleration * Math.cos((this.rotation-90) * Math.PI / 180);
-            this._velY += this._acceleration * Math.sin((this.rotation-90) * Math.PI / 180);
+            //go forward depending on rotation
+            //subtract 90 degrees because the sprite faces upwards, not to the right
+            this._velX += this._ACCELERATION * Math.cos((this.rotation-90) * Math.PI / 180);
+            this._velY += this._ACCELERATION * Math.sin((this.rotation-90) * Math.PI / 180);
         }
 
         public brake() {
-            this._velX -= this._acceleration * Math.cos((this.rotation-90) * Math.PI / 180);
-            this._velY -= this._acceleration * Math.sin((this.rotation-90) * Math.PI / 180);
+            //same as above, but subtracting instead of adding
+            this._velX -= this._ACCELERATION * Math.cos((this.rotation-90) * Math.PI / 180);
+            this._velY -= this._ACCELERATION * Math.sin((this.rotation-90) * Math.PI / 180);
         }
 
         public turnRight() {
-            this._curTurnSpeed -= this._turnAccel;
+            this._curTurnSpeed -= this._TURN_ACCEL;
         }
 
         public turnLeft() {
-            this._curTurnSpeed += this._turnAccel;
+            this._curTurnSpeed += this._TURN_ACCEL;
         }
 
         private _onKeyDown(event : KeyboardEvent) {

@@ -9,6 +9,7 @@ var currentScene;
 var scene;
 var numLaps;
 var collision;
+//we need to have a 2nd virtual canvas for detecting if a vehicle is on the grass or not
 var virtualCanvas = document.createElement('canvas');
 var virtualCanvas2d = virtualCanvas.getContext('2d');
 var paused = false;
@@ -18,8 +19,6 @@ var canPause = false;
 // Preload Assets required
 var assetData = [
     { id: "Menu_BG", src: "../../Assets/images/titlescreen.png" },
-    { id: "PlayBtn", src: "../../Assets/images/playBtn.png" },
-    { id: "Player", src: "../../Assets/images/shipAtlas.png" },
     { id: "Player1", src: "../../Assets/images/redcar.png" },
     { id: "Player2", src: "../../Assets/images/bluecar.png" },
     { id: "Pause", src: "../../Assets/images/pause.png" },
@@ -35,19 +34,20 @@ var assetData = [
     { id: "Block", src: "../../Assets/images/block.png" }
 ];
 function drawVirtualTrack() {
+    //put the track on the 2nd canvas without rendering it to the real canvas
     var background = new Image();
     virtualCanvas.width = canvas.clientWidth;
     virtualCanvas.height = canvas.clientHeight;
-    background.src = "../../Assets/images/track1.png"; //calling the asset doesn't work
+    background.src = "../../Assets/images/track1.png";
     virtualCanvas2d.drawImage(background, 0, 0);
 }
 function getPixel(x, y) {
+    //This lets us get the color of any specified pixel on the track
     return virtualCanvas2d.getImageData(x, y, x + 1, y + 1);
 }
 function preload() {
     // Create a queue for assets being loaded
     assets = new createjs.LoadQueue(false);
-    // assets.installPlugin(createjs.Sound);
     // Register callback function to be run when assets complete loading.
     assets.on("complete", init, this);
     assets.loadManifest(assetData);
@@ -59,6 +59,7 @@ function exitBtnClick(event) {
     changeScene();
 }
 function togglePause() {
+    //pause functionality is here so we can use it in multiple scenes
     if (!paused && canPause) {
         stage.addChild(pauseBg);
         stage.addChild(exitBtn);
@@ -119,7 +120,7 @@ function changeScene() {
         case config.Scene.SINGLEPLAYER:
             stage.removeAllChildren();
             currentScene = new scenes.Track();
-            console.log("Starting TRACK scene");
+            console.log("Starting SINGLEPLAYER scene");
             break;
         case config.Scene.MULTIPLAYER:
             stage.removeAllChildren();

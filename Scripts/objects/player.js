@@ -9,10 +9,15 @@ var objects;
         __extends(Player, _super);
         function Player(imageString, x, y) {
             _super.call(this, imageString, "");
-            this._acceleration = 0.6;
-            this._friction = 0.9;
-            this._turnAccel = 0.5;
-            this._turnFriction = 0.9;
+            //constant variables
+            //if only the const or readonly keywords could be used here
+            this._ACCELERATION = 0.67;
+            this._DEFAULT_FRICTION = 1.12;
+            this._TURN_ACCEL = 0.6;
+            this._TURN_FRICTION = 1.2;
+            this._GRASS_FRICTION = 1.4;
+            //other variables
+            this._curFriction = 0;
             this._curTurnSpeed = 0;
             this._velX = 0;
             this._velY = 0;
@@ -24,51 +29,69 @@ var objects;
             window.onkeyup = this._onKeyUp;
         }
         Player.prototype.bump = function (theirX, theirY) {
-            this._velX = 30 / (this.position.x - theirX);
-            this._velY = 30 / (this.position.y - theirY);
+            this._velX = (this.position.x - theirX) / 10;
+            this._velY = (this.position.y - theirY) / 10;
+        };
+        //this exists so that p2 can call gameObject.update()
+        Player.prototype.updateSuper = function () {
+            _super.prototype.update.call(this);
         };
         Player.prototype.update = function () {
             _super.prototype.update.call(this);
-            if (controls.P1UP) {
+            if (controls.P1UP)
                 this.moveForward();
-            }
-            if (controls.P1DOWN) {
+            if (controls.P1DOWN)
                 this.brake();
-            }
-            if (controls.P1RIGHT) {
+            if (controls.P1RIGHT)
                 this.turnLeft();
-            }
-            if (controls.P1LEFT) {
+            if (controls.P1LEFT)
                 this.turnRight();
-            }
+            this.checkBoundaries();
             this.updateMovement();
         };
+        Player.prototype.checkBoundaries = function () {
+            //if we try to go off any edge of the stage, act as if we hit a wall
+            if (this.position.x > config.Screen.WIDTH)
+                this.bump(this.position.x + 50, this.position.y);
+            else if (this.position.x < 0)
+                this.bump(this.position.x - 50, this.position.y);
+            else if (this.position.y > config.Screen.HEIGHT)
+                this.bump(this.position.x, this.position.y + 50);
+            else if (this.position.y < 0)
+                this.bump(this.position.x, this.position.y - 50);
+        };
         Player.prototype.updateMovement = function () {
-            this._pixelData = getPixel(this.x, this.y).data;
+            //adjust friction depending on what surface we're on
+            this._pixelData = getPixel(this.position.x, this.position.y).data;
+            //if the green value beneath us is >= 150 and the red value is <= 0 then we're certainly on grass
             if (this._pixelData[1] >= 150 && this._pixelData[0] <= 0)
-                this._friction = 0.7;
+                this._curFriction = this._GRASS_FRICTION;
             else
-                this._friction = 0.91;
-            this._velX *= this._friction;
-            this._velY *= this._friction;
-            this._curTurnSpeed *= this._turnFriction;
+                this._curFriction = this._DEFAULT_FRICTION;
+            //smooth acceleration + momentum based movement and turning
+            this._curTurnSpeed /= this._TURN_FRICTION;
             this.rotation += this._curTurnSpeed;
+            this._velX /= this._curFriction;
+            this._velY /= this._curFriction;
             this.position.x += this._velX;
             this.position.y += this._velY;
         };
         Player.prototype.moveForward = function () {
-            this._velX += this._acceleration * Math.cos((this.rotation - 90) * Math.PI / 180);
-            this._velY += this._acceleration * Math.sin((this.rotation - 90) * Math.PI / 180);
+            //go forward depending on rotation
+            //subtract 90 degrees because the sprite faces upwards, not to the right
+            this._velX += this._ACCELERATION * Math.cos((this.rotation - 90) * Math.PI / 180);
+            this._velY += this._ACCELERATION * Math.sin((this.rotation - 90) * Math.PI / 180);
         };
         Player.prototype.brake = function () {
-            this._velX -= this._acceleration * Math.cos((this.rotation - 90) * Math.PI / 180);
-            this._velY -= this._acceleration * Math.sin((this.rotation - 90) * Math.PI / 180);
+            //same as above, but subtracting instead of adding
+            this._velX -= this._ACCELERATION * Math.cos((this.rotation - 90) * Math.PI / 180);
+            this._velY -= this._ACCELERATION * Math.sin((this.rotation - 90) * Math.PI / 180);
         };
         Player.prototype.turnRight = function () {
-            this._curTurnSpeed -= this._turnAccel;
+            this._curTurnSpeed -= this._TURN_ACCEL;
         };
         Player.prototype.turnLeft = function () {
-            this._curTurnSpeed += this._turnAccel;
+            this._curTurnSpeed += this._TURN_ACCEL;
         };
         Player.prototype._onKeyDown = function (event) {
             switch (event.keyCode) {

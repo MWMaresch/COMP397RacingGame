@@ -7,24 +7,22 @@ module objects {
 
         public update() : void {
 
-            this.x = this.position.x;
-            this.y = this.position.y;
+            this.updateSuper();
 
-            if(controls.P2UP) {
+            //the only difference between players is what keys are used to control the vehicle
+            if(controls.P2UP) 
                 this.moveForward();
-            }
-            
-            if(controls.P2DOWN) {
+                
+            if(controls.P2DOWN) 
                 this.brake();
-            }
 
-            if(controls.P2RIGHT) {
+            if(controls.P2RIGHT) 
                 this.turnLeft();
-            }
 
-            if(controls.P2LEFT) {
+            if(controls.P2LEFT) 
                 this.turnRight();
-            }
+            
+            this.checkBoundaries();
             this.updateMovement();
         }
     }

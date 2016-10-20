@@ -14,6 +14,7 @@ var numLaps: number;
 
 var collision: managers.Collision;
 
+//we need to have a 2nd virtual canvas for detecting if a vehicle is on the grass or not
 var virtualCanvas = document.createElement('canvas');
 var virtualCanvas2d = virtualCanvas.getContext('2d');
 
@@ -25,8 +26,6 @@ var canPause : boolean = false;
 // Preload Assets required
 var assetData:objects.Asset[] = [
     {id: "Menu_BG", src:"../../Assets/images/titlescreen.png"},
-    {id: "PlayBtn", src:"../../Assets/images/playBtn.png"},
-    {id: "Player", src:"../../Assets/images/shipAtlas.png"},
     {id: "Player1", src:"../../Assets/images/redcar.png"},
     {id: "Player2", src:"../../Assets/images/bluecar.png"},
     {id: "Pause", src:"../../Assets/images/pause.png"},
@@ -40,26 +39,25 @@ var assetData:objects.Asset[] = [
     {id: "Track", src:"../../Assets/images/track1.png"},
     {id: "FinishLine", src:"../../Assets/images/finish.png"},
     {id: "Block", src:"../../Assets/images/block.png"}
-
 ];
 
 function drawVirtualTrack(){
-    var background = new Image();
+    //put the track on the 2nd canvas without rendering it to the real canvas
+    let background = new Image();
     virtualCanvas.width = canvas.clientWidth;
     virtualCanvas.height = canvas.clientHeight;
-    background.src = "../../Assets/images/track1.png";//calling the asset doesn't work
+    background.src = "../../Assets/images/track1.png";
     virtualCanvas2d.drawImage(background,0,0);
 }
 
 function getPixel(x:number, y:number){
+    //This lets us get the color of any specified pixel on the track
     return virtualCanvas2d.getImageData(x,y,x+1,y+1);
 }
 
 function preload() {
     // Create a queue for assets being loaded
     assets = new createjs.LoadQueue(false);
-    // assets.installPlugin(createjs.Sound);
-
 
     // Register callback function to be run when assets complete loading.
     assets.on("complete", init, this);
@@ -74,15 +72,14 @@ function exitBtnClick(event : createjs.MouseEvent) {
 }
 
 function togglePause(){
-    if (!paused && canPause)
-    {
+    //pause functionality is here so we can use it in multiple scenes
+    if (!paused && canPause) {
         stage.addChild(pauseBg);
         stage.addChild(exitBtn);
         exitBtn.on("click", exitBtnClick, this);
         paused = true;
     }
-    else
-    {
+    else {
         stage.removeChild(pauseBg);
         stage.removeChild(exitBtn);
         paused = false;
@@ -94,7 +91,6 @@ function init() {
     pauseBg = new createjs.Bitmap(assets.getResult("Pause"));
     exitBtn = new objects.Button("ExitBtn", config.Screen.CENTER_X, config.Screen.CENTER_Y + 150, 177, 84);
     canvas = document.getElementById("canvas");
-
     drawVirtualTrack();
 
     stage = new createjs.Stage(canvas);
@@ -150,7 +146,7 @@ function changeScene() : void {
         case config.Scene.SINGLEPLAYER :
             stage.removeAllChildren();
             currentScene = new scenes.Track();
-            console.log("Starting TRACK scene");
+            console.log("Starting SINGLEPLAYER scene");
             break;
         case config.Scene.MULTIPLAYER :
             stage.removeAllChildren();
@@ -163,5 +159,4 @@ function changeScene() : void {
             console.log("Starting INSTRUCTIONS scene");
             break;
     }
-    
 }

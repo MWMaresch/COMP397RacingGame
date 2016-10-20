@@ -11,20 +11,17 @@ var objects;
             _super.call(this, imageString, x, y);
         }
         Player2.prototype.update = function () {
-            this.x = this.position.x;
-            this.y = this.position.y;
-            if (controls.P2UP) {
+            this.updateSuper();
+            //the only difference between players is what keys are used to control the vehicle
+            if (controls.P2UP)
                 this.moveForward();
-            }
-            if (controls.P2DOWN) {
+            if (controls.P2DOWN)
                 this.brake();
-            }
-            if (controls.P2RIGHT) {
+            if (controls.P2RIGHT)
                 this.turnLeft();
-            }
-            if (controls.P2LEFT) {
+            if (controls.P2LEFT)
                 this.turnRight();
-            }
+            this.checkBoundaries();
             this.updateMovement();
         };
         return Player2;
