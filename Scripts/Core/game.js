@@ -31,6 +31,7 @@ var assetData = [
     { id: "Instructions", src: "../../Assets/images/Instructions screen.png" },
     { id: "Track", src: "../../Assets/images/track1.png" },
     { id: "FinishLine", src: "../../Assets/images/finish.png" },
+    { id: "Checkpoint", src: "../../Assets/images/checkpoint.png" },
     { id: "Block", src: "../../Assets/images/block.png" }
 ];
 function drawVirtualTrack() {
@@ -84,12 +85,13 @@ function init() {
     createjs.Ticker.on("tick", this.gameLoop, this);
     collision = new managers.Collision();
     var atlasData = {
-        images: [assets.getResult("FinishLine"), assets.getResult("Player1"), assets.getResult("Player2")],
-        frames: [[0, 0, 241, 13, 0], [0, 0, 32, 64, 1], [0, 0, 32, 64, 2]],
+        images: [assets.getResult("FinishLine"), assets.getResult("Player1"), assets.getResult("Player2"), assets.getResult("Checkpoint")],
+        frames: [[0, 0, 97, 37, 0], [0, 0, 32, 64, 1], [0, 0, 32, 64, 2], [0, 0, 241, 13, 3]],
         animations: {
             finishline: 0,
             redcar: 1,
-            bluecar: 2
+            bluecar: 2,
+            checkpoint: 3
         },
         "texturepacker": [
             "SmartUpdateHash: $TexturePacker:SmartUpdate:013a2fc3dc6ba39276db3e6758d1ddbd:84789f29f2d01b3ea1c113a3b2d1bfdc:e696b1a5c9e543dbf26d7c8d29a6d04f$",

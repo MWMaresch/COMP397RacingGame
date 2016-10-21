@@ -38,6 +38,7 @@ var assetData:objects.Asset[] = [
     {id: "Instructions", src:"../../Assets/images/Instructions screen.png"},
     {id: "Track", src:"../../Assets/images/track1.png"},
     {id: "FinishLine", src:"../../Assets/images/finish.png"},
+    {id: "Checkpoint", src:"../../Assets/images/checkpoint.png"},
     {id: "Block", src:"../../Assets/images/block.png"}
 ];
 
@@ -101,14 +102,15 @@ function init() {
     collision = new managers.Collision();
 
     let atlasData = {
-        images: [assets.getResult("FinishLine"),  assets.getResult("Player1"),  assets.getResult("Player2")],
+        images: [assets.getResult("FinishLine"),  assets.getResult("Player1"),  assets.getResult("Player2"), assets.getResult("Checkpoint")],
 
-        frames:[ [0, 0, 241, 13, 0], [0, 0, 32, 64, 1], [0, 0, 32, 64, 2]],
+        frames:[ [0, 0, 97, 37, 0], [0, 0, 32, 64, 1], [0, 0, 32, 64, 2], [0, 0, 241, 13, 3]],
 
         animations: {
         finishline: 0,
         redcar: 1,
-        bluecar: 2
+        bluecar: 2,
+        checkpoint: 3
         },
 
         "texturepacker": [

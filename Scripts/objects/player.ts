@@ -81,7 +81,7 @@ module objects {
             //adjust friction depending on what surface we're on
             this._pixelData = getPixel(this.position.x, this.position.y).data;
             //if the green value beneath us is >= 150 and the red value is <= 0 then we're certainly on grass
-            if (this._pixelData[1] >= 150 && this._pixelData[0] <= 0)
+            if (this._pixelData[1] >= 100 && this._pixelData[0] <= 50)
                 this._curFriction = this._GRASS_FRICTION;
             else
                 this._curFriction = this._DEFAULT_FRICTION;

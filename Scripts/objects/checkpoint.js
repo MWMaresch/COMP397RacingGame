@@ -8,7 +8,7 @@ var objects;
     var Checkpoint = (function (_super) {
         __extends(Checkpoint, _super);
         function Checkpoint(x, y) {
-            _super.call(this, "finishline", "");
+            _super.call(this, "checkpoint", "");
             this.visible = false;
             this.x = x;
             this.y = y;

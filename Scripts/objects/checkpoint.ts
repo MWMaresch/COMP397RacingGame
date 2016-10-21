@@ -7,7 +7,7 @@ module objects {
         public height:number;
 
         constructor(x:number, y:number) {
-            super("finishline", "");
+            super("checkpoint", "");
             this.visible = false;
             this.x = x;
             this.y = y;

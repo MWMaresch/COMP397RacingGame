@@ -21,7 +21,7 @@ var scenes;
             this._bg = new createjs.Bitmap(assets.getResult("Track"));
             this.addChild(this._bg);
             //finish line & checkpoints
-            this._finishLine = new objects.FinishLine(118, 315);
+            this._finishLine = new objects.FinishLine(118, 288);
             this.addChild(this._finishLine);
             this._checkpoint1 = new objects.Checkpoint(880, 182);
             this.addChild(this._checkpoint1);
