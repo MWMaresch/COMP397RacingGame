@@ -5,7 +5,7 @@ module objects {
 
         //constant variables
         //if only the const or readonly keywords could be used here
-        private _ACCELERATION : number = 0.67;
+        private _ACCELERATION : number = 0.72;
         private _DEFAULT_FRICTION : number = 1.12;
         private _TURN_ACCEL : number = 0.6;
         private _TURN_FRICTION : number = 1.2;

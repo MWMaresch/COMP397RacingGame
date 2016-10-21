@@ -11,7 +11,7 @@ var objects;
             _super.call(this, imageString, "");
             //constant variables
             //if only the const or readonly keywords could be used here
-            this._ACCELERATION = 0.67;
+            this._ACCELERATION = 0.72;
             this._DEFAULT_FRICTION = 1.12;
             this._TURN_ACCEL = 0.6;
             this._TURN_FRICTION = 1.2;
